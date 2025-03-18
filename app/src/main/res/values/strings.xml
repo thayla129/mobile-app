@@ -15,5 +15,24 @@
 
 
 
+    <string name="titleHi">Hi!</string>
+    <string name="Age">Age</string>
+    <string name="Weight">Weight</string>
+    <string name="Height">Height</string>
+    <string name="supportEmptyField">The field is mandatory</string>
+    <string name="support_weight">The name is mandatory and must have 3 or more letters.</string>
+    <string name="support_height">The name is mandatory and must have 3 or more letters.</string>
+
+    <string name="titleYourBMIResult">Your BMI Result</string>
+    <string name="YouHaveClassIObesity">You have Class I Obesity.</string>
+    <string name="buttonNewCalc">New Calc</string>
+    <string name="exampleNumber">1.80</string>
+    <string name="circleNumber">30,6</string>
+    <string name="ageNumber">17 years</string>
+    <string name="weigthNumber">68 kg</string>
+    <string name="heightNumber">178 cm</string>
+
+
+
 
 </resources>
