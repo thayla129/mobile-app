@@ -7,4 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="ligth_blue">#FF83E5FA</color>
+    <color name="ligth_green">#FF4CC886</color>
+    <color name="yellow">#FFEDE735</color>
+    <color name="ligth_orange">#FFFFA903</color>
+    <color name="dark_orange">#FFFE5B00</color>
+    <color name="red">#FFFF292A</color>
+
+    <string name="under_weight">You ate below your ideal weight.</string>
+    <string name="normal_weight">You are normal body weight.</string>
+    <string name="over_weight">You are slightly overweight.</string>
+    <string name="class1_weight">You have Class I obesity</string>
+    <string name="class2_weight">You have Class II obesity</string>
+    <string name="class3_weight">You have Class III obesity</string>
+
+
 </resources>

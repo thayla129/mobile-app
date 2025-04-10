@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.BMI.UserDataScreens
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,20 +35,63 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 import br.senai.sp.jandira.bmi.R
 
 
 @Composable
-fun UserDataScreens(modifier: Modifier = Modifier) {
+fun UserDataScreens(controleDeNavegacao: NavHostController?) {
     val nomeState = remember { mutableStateOf("") }
+
+
+    val ageState = remember {
+        mutableStateOf("")
+    }
+
+    val weightState = remember {
+        mutableStateOf("")
+    }
+    val heightState = remember {
+        mutableStateOf("")
+    }
+
+
+    var selectedColorState = remember {
+        mutableStateOf(Color(0xFFEE9ED8))
+    }
+
+    val unselectedColorState = remember {
+        mutableStateOf(Color.LightGray)
+    }
+
+    val isMaleClicked = remember {
+        mutableStateOf(false)
+    }
+
+    val isFemaleClicked = remember {
+        mutableStateOf(false)
+    }
+
+
+
+
+    val context = LocalContext.current
+    val userFile = context
+        .getSharedPreferences("user_file", Context.MODE_PRIVATE)
+
+    val userName = userFile.getString("user_name", "User not found")
+
+    val editor = userFile.edit()
 
     Box(
         modifier = Modifier
@@ -65,11 +109,18 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Bottom
         ) {
             Text(
-                text = "HI!",
+                text = "${ stringResource(R.string.titleHi)}, $userName!",
                 fontSize = 24.sp,
                 color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        horizontal = 32.dp,
+                        vertical = 32.dp
+                    )
 
-                )
+            )
 
             Card(
                 modifier = Modifier
@@ -112,12 +163,15 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                                 )
                             }
                             Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth().padding(10.dp, 5.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                    0xFF103159
-                                )
-                                )
+                                onClick = {
+                                    isMaleClicked.value = true
+                                    isFemaleClicked.value = false
+
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp, 5.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = if (isMaleClicked.value) selectedColorState.value else unselectedColorState.value)
                             ) {
                                 Text(text = stringResource(R.string.male), fontSize = 16.sp, color = Color.White)
                             }
@@ -145,12 +199,14 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                                 )
                             }
                             Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth().padding(10.dp, 5.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                    0xFFA40870
-                                )
-                                )
+                                onClick = {
+                                    isMaleClicked.value = false
+                                    isFemaleClicked.value = true
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp, 5.dp),
+                                colors = ButtonDefaults.buttonColors(if (isFemaleClicked.value) selectedColorState.value else unselectedColorState.value)
                             ) {
                                 Text(text = stringResource(R.string.female), fontSize = 16.sp, color = Color.White)
                             }
@@ -162,9 +218,11 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         OutlinedTextField(
-                            value = nomeState.value,
-                            onValueChange = { nomeState.value = it },
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            value = ageState.value,
+                            onValueChange = { ageState.value = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             shape = RoundedCornerShape(12.dp),
                             label = { Text(stringResource(R.string.age)) },
                             leadingIcon = {
@@ -178,9 +236,11 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                         )
 
                         OutlinedTextField(
-                            value = nomeState.value,
-                            onValueChange = { nomeState.value = it },
-                            modifier = Modifier.fillMaxWidth().padding(0.dp, 25.dp),
+                            value = weightState.value,
+                            onValueChange = { weightState.value = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 25.dp),
                             shape = RoundedCornerShape(12.dp),
                             label = { Text(stringResource(R.string.weight)) },
                             leadingIcon = {
@@ -194,9 +254,11 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                         )
 
                         OutlinedTextField(
-                            value = nomeState.value,
-                            onValueChange = { nomeState.value = it },
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            value = heightState.value,
+                            onValueChange = { heightState.value = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             shape = RoundedCornerShape(12.dp),
                             label = { Text(stringResource(R.string.height)) },
                             leadingIcon = {
@@ -211,7 +273,15 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
                     }
 
                     Button(
-                        onClick = {},
+                        onClick = {
+
+                            editor.putInt("user_age", ageState.value.toInt())
+                            editor.putInt("user_weight", weightState.value.toInt())
+                            editor.putInt("user_height", heightState.value.toInt())
+                            editor.apply()
+
+                            controleDeNavegacao?.navigate("bmi_result")
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         border = BorderStroke(
                             1.dp, Brush.linearGradient(
@@ -233,7 +303,7 @@ fun UserDataScreens(modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Composable
 private fun UserDataScreensPreview() {
-    UserDataScreens()
+    UserDataScreens(null)
 }
 
-//
+//Lembrar de pegar a parte do click cinza, com os meninos, ainda nao terminou

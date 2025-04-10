@@ -1,5 +1,6 @@
 package sp.senai.jandira.bmi.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,17 +37,32 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import br.senai.sp.jandira.bmi.R
 
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(controleDeNavegacao: NavHostController?) {
+
+    //Obtendo o contexto da tela atual
+    val context = LocalContext.current
+
+// abrir ou criar um arquivo SharedPreferences
+    val userFile =
+        context.getSharedPreferences(
+            "user_file", Context.MODE_PRIVATE
+        )
+
+// Criamos um editor responsável por editar o arquivo
+    val editor = userFile.edit()
 
 
     var nomeState = remember {
         mutableStateOf(value = "")
     }
+
+
 
     Box(
         modifier = Modifier
@@ -100,8 +116,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         fontSize = 30.sp,
                     )
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = nomeState.value,
+                        onValueChange = {
+                            nomeState.value = it
+                        },
                         label = {
                             Text(text = "Digite o seu nome")
                         },
@@ -136,7 +154,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         .padding(top = 220.dp, start = 300.dp)
                 ) {
                     Button(
-                        onClick = {},
+                        onClick = {
+                            editor.putString("user_name", nomeState.value)
+                            editor.putString("user_city", "Jandira")
+                            editor.apply()
+                            controleDeNavegacao?.navigate("user_data")
+
+                        },
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(
@@ -159,5 +183,5 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(null)
 }

@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.bmi.screens
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,15 +12,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import br.senai.sp.jandira.bmi.R
+import br.senai.sp.jandira.bmi.model.bmiCalculator
 
 @Composable
-fun BMIResultScreens() {
+fun BMIResultScreens(controleDeNavegacao: NavHostController?) {
+
+
+    //Abrimos o arquivo "user_file"
+        val context = LocalContext.current
+        val userFile = context.getSharedPreferences(
+            "user_file", Context.MODE_PRIVATE
+        )
+
+    //Extraimos os dados e guardamos em variaveis locais
+
+    val userAge = userFile.getInt("user_age", 0)
+    val userWeight = userFile.getInt("user_weight", 0)
+    val userHeight = userFile.getInt("user_height", 0)
+
+    var resultBmi = bmiCalculator(userWeight, userHeight.toDouble())
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -77,8 +98,10 @@ fun BMIResultScreens() {
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
+
+                        val bmiValues = resultBmi.bmiValues.second
                             Text(
-                                text = stringResource(R.string.circleNumber),
+                                text = "${resultBmi.bmiValues.second}",
                                 fontSize = 40.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -86,7 +109,7 @@ fun BMIResultScreens() {
                     }
 
                     Text(
-                        text = stringResource(R.string.YouHaveClassIObesity),
+                        text = resultBmi.bmiValues.first,
                         fontSize = 28.sp
                     )
 
@@ -109,7 +132,7 @@ fun BMIResultScreens() {
                             ) {
                                 Text(text = stringResource(R.string.Age), fontSize = 20.sp)
                                 Text(
-                                    text = stringResource(R.string.ageNumber),
+                                    text = "$userAge",
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -121,7 +144,7 @@ fun BMIResultScreens() {
                             ) {
                                 Text(text = stringResource(R.string.Weight), fontSize = 20.sp)
                                 Text(
-                                    text = stringResource(R.string.weigthNumber),
+                                    text = "$userWeight",
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -133,7 +156,7 @@ fun BMIResultScreens() {
                             ) {
                                 Text(text = stringResource(R.string.Height), fontSize = 20.sp)
                                 Text(
-                                    text = stringResource(R.string.heightNumber),
+                                    text = "$userHeight",
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -144,7 +167,13 @@ fun BMIResultScreens() {
                     Spacer(modifier = Modifier.weight(1f)) // Empurra o botão para baixo
 
                     Button(
-                        onClick = { },
+                        onClick = {
+
+                            controleDeNavegacao?.navigate("home")
+
+
+
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
@@ -175,5 +204,5 @@ fun BMIResultScreens() {
 @Preview(showSystemUi = true)
 @Composable
 private fun BMIResultScreenPreview() {
-    BMIResultScreens()
+    BMIResultScreens(null)
 }
